@@ -1,0 +1,804 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>Admin - Panel de Validación de Depósitos</title>
+
+<style>
+:root{
+  --bg:#0f172a;
+  --card:#1e293b;
+  --border:#334155;
+  --text:#f1f5f9;
+  --muted:#94a3b8;
+  --accent:#10b981;
+  --danger:#ef4444;
+  --warning:#f59e0b;
+  font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial;
+}
+
+*{box-sizing:border-box;}
+html,body{height:100%;margin:0;background:var(--bg);color:var(--text);font-size:14px;}
+
+.container{max-width:1600px;margin:0 auto;padding:20px;}
+
+.header{
+  background:var(--card);
+  border:1px solid var(--border);
+  border-radius:12px;
+  padding:24px;
+  margin-bottom:24px;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  flex-wrap:wrap;
+  gap:16px;
+}
+
+.header h1{margin:0;font-size:28px;font-weight:700;}
+
+.connection-status{
+  padding:8px 16px;
+  border-radius:20px;
+  font-size:12px;
+  font-weight:700;
+  display:inline-flex;
+  align-items:center;
+  gap:8px;
+}
+
+.status-connected{background:rgba(16,185,129,0.2);color:#10b981;border:1px solid rgba(16,185,129,0.3);}
+.status-disconnected{background:rgba(239,68,68,0.2);color:#ef4444;border:1px solid rgba(239,68,68,0.3);}
+
+.pulse{
+  width:8px;
+  height:8px;
+  border-radius:50%;
+  background:currentColor;
+  animation:pulse 2s ease-in-out infinite;
+}
+
+@keyframes pulse{
+  0%,100%{opacity:1;}
+  50%{opacity:0.5;}
+}
+
+.stats{display:flex;gap:16px;flex-wrap:wrap;}
+.stat-card{
+  background:rgba(255,255,255,0.05);
+  border:1px solid var(--border);
+  border-radius:8px;
+  padding:12px 20px;
+  min-width:140px;
+}
+.stat-label{font-size:12px;color:var(--muted);margin-bottom:4px;}
+.stat-value{font-size:24px;font-weight:700;}
+.stat-pending{color:var(--warning);}
+.stat-approved{color:var(--accent);}
+.stat-rejected{color:var(--danger);}
+
+.tabs{
+  display:flex;
+  gap:8px;
+  margin-bottom:24px;
+  background:var(--card);
+  border:1px solid var(--border);
+  border-radius:12px;
+  padding:8px;
+}
+
+.tab{
+  flex:1;
+  padding:12px 20px;
+  border:none;
+  background:transparent;
+  color:var(--muted);
+  border-radius:8px;
+  cursor:pointer;
+  font-weight:600;
+  transition:all 0.2s;
+}
+
+.tab:hover{background:rgba(255,255,255,0.05);}
+.tab.active{background:var(--accent);color:#fff;}
+
+.deposits-grid{
+  display:grid;
+  gap:16px;
+}
+
+.deposit-card{
+  background:var(--card);
+  border:1px solid var(--border);
+  border-radius:12px;
+  padding:20px;
+  transition:transform 0.2s, box-shadow 0.2s;
+}
+
+.deposit-card:hover{
+  transform:translateY(-2px);
+  box-shadow:0 8px 24px rgba(0,0,0,0.3);
+}
+
+.deposit-header{
+  display:flex;
+  justify-content:space-between;
+  align-items:flex-start;
+  margin-bottom:16px;
+  padding-bottom:16px;
+  border-bottom:1px solid var(--border);
+}
+
+.deposit-id{
+  font-family:monospace;
+  font-size:12px;
+  color:var(--muted);
+  background:rgba(255,255,255,0.05);
+  padding:4px 8px;
+  border-radius:4px;
+}
+
+.status-badge{
+  padding:6px 12px;
+  border-radius:20px;
+  font-size:12px;
+  font-weight:700;
+  text-transform:uppercase;
+  display:inline-flex;
+  align-items:center;
+  gap:6px;
+}
+
+.status-pending{background:rgba(245,158,11,0.2);color:#fbbf24;border:1px solid rgba(245,158,11,0.3);}
+.status-approved{background:rgba(16,185,129,0.2);color:#10b981;border:1px solid rgba(16,185,129,0.3);}
+.status-rejected{background:rgba(239,68,68,0.2);color:#ef4444;border:1px solid rgba(239,68,68,0.3);}
+
+.deposit-info{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(200px,1fr));
+  gap:16px;
+  margin-bottom:20px;
+}
+
+.info-group{
+  display:flex;
+  flex-direction:column;
+  gap:4px;
+}
+
+.info-label{
+  font-size:11px;
+  color:var(--muted);
+  text-transform:uppercase;
+  letter-spacing:0.5px;
+}
+
+.info-value{
+  font-size:14px;
+  font-weight:600;
+  color:var(--text);
+}
+
+.amount-display{
+  font-size:32px;
+  font-weight:700;
+  color:var(--accent);
+}
+
+.card-number{
+  font-family:monospace;
+  letter-spacing:2px;
+  background:rgba(255,255,255,0.05);
+  padding:8px;
+  border-radius:6px;
+  display:inline-block;
+}
+
+.actions{
+  display:flex;
+  gap:12px;
+  margin-top:16px;
+  padding-top:16px;
+  border-top:1px solid var(--border);
+}
+
+.btn{
+  flex:1;
+  padding:12px 20px;
+  border:none;
+  border-radius:8px;
+  font-weight:700;
+  cursor:pointer;
+  transition:all 0.2s;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  gap:8px;
+}
+
+.btn:hover{transform:translateY(-1px);box-shadow:0 4px 12px rgba(0,0,0,0.3);}
+.btn:disabled{opacity:0.5;cursor:not-allowed;transform:none;}
+
+.btn-approve{background:var(--accent);color:#fff;}
+.btn-approve:hover{background:#059669;}
+
+.btn-reject{background:var(--danger);color:#fff;}
+.btn-reject:hover{background:#dc2626;}
+
+.btn-pending{background:var(--warning);color:#fff;}
+.btn-pending:hover{background:#d97706;}
+
+.empty-state{
+  background:var(--card);
+  border:1px solid var(--border);
+  border-radius:12px;
+  padding:60px 20px;
+  text-align:center;
+  color:var(--muted);
+}
+
+.empty-state svg{
+  width:64px;
+  height:64px;
+  margin:0 auto 16px;
+  opacity:0.5;
+}
+
+.user-balances{
+  background:var(--card);
+  border:1px solid var(--border);
+  border-radius:12px;
+  padding:20px;
+  margin-top:24px;
+}
+
+.user-balances h2{margin:0 0 20px 0;font-size:20px;}
+
+.balance-grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fill,minmax(280px,1fr));
+  gap:12px;
+}
+
+.balance-card{
+  background:rgba(255,255,255,0.05);
+  border:1px solid var(--border);
+  border-radius:8px;
+  padding:16px;
+  position:relative;
+}
+
+.balance-user{font-weight:600;margin-bottom:4px;}
+.balance-id{font-size:11px;color:var(--muted);font-family:monospace;margin-bottom:12px;}
+.balance-amount{font-size:28px;font-weight:700;color:var(--accent);}
+
+.add-balance-btn{
+  margin-top:12px;
+  background:rgba(16,185,129,0.2);
+  color:var(--accent);
+  border:1px solid rgba(16,185,129,0.3);
+  padding:8px 16px;
+  border-radius:6px;
+  cursor:pointer;
+  font-weight:600;
+  width:100%;
+  transition:all 0.2s;
+}
+
+.add-balance-btn:hover{
+  background:rgba(16,185,129,0.3);
+  transform:translateY(-1px);
+}
+
+.modal{
+  display:none;
+  position:fixed;
+  top:0;
+  left:0;
+  right:0;
+  bottom:0;
+  background:rgba(0,0,0,0.8);
+  z-index:1000;
+  align-items:center;
+  justify-content:center;
+  padding:20px;
+}
+
+.modal.active{display:flex;}
+
+.modal-content{
+  background:var(--card);
+  border:1px solid var(--border);
+  border-radius:12px;
+  padding:24px;
+  max-width:400px;
+  width:100%;
+}
+
+.modal-content h3{margin:0 0 20px 0;}
+
+.input-group{margin-bottom:16px;}
+.input-group label{display:block;margin-bottom:8px;color:var(--muted);font-size:13px;}
+.input-group input{
+  width:100%;
+  padding:12px;
+  border-radius:8px;
+  border:1px solid var(--border);
+  background:rgba(255,255,255,0.05);
+  color:var(--text);
+  font-size:14px;
+}
+
+.modal-actions{
+  display:flex;
+  gap:12px;
+  margin-top:20px;
+}
+
+.timestamp{
+  font-size:11px;
+  color:var(--muted);
+  margin-top:8px;
+}
+
+.config-section{
+  background:var(--card);
+  border:1px solid var(--border);
+  border-radius:12px;
+  padding:20px;
+  margin-bottom:24px;
+}
+
+.config-section h3{margin:0 0 16px 0;font-size:18px;}
+
+.config-input{
+  width:100%;
+  padding:12px;
+  border-radius:8px;
+  border:1px solid var(--border);
+  background:rgba(255,255,255,0.05);
+  color:var(--text);
+  font-size:13px;
+  font-family:monospace;
+  margin-bottom:12px;
+}
+
+.save-config-btn{
+  background:var(--accent);
+  color:#fff;
+  padding:12px 24px;
+  border:none;
+  border-radius:8px;
+  font-weight:700;
+  cursor:pointer;
+}
+
+@media(max-width:768px){
+  .deposit-info{grid-template-columns:1fr;}
+  .actions{flex-direction:column;}
+  .stats{width:100%;}
+}
+</style>
+</head>
+<body>
+
+<div class="container">
+  <div class="config-section">
+    <h3>⚙️ Configuración de Firebase</h3>
+    <p style="color:var(--muted);font-size:13px;margin:0 0 16px 0;">
+      Configura tu proyecto de Firebase. <a href="https://console.firebase.google.com" target="_blank" style="color:var(--accent);">Ir a Firebase Console</a>
+    </p>
+    <input type="text" class="config-input" id="apiKey" placeholder="API Key">
+    <input type="text" class="config-input" id="authDomain" placeholder="Auth Domain (tu-proyecto.firebaseapp.com)">
+    <input type="text" class="config-input" id="projectId" placeholder="Project ID">
+    <input type="text" class="config-input" id="databaseURL" placeholder="Database URL (https://tu-proyecto.firebaseio.com)">
+    <button class="save-config-btn" onclick="saveFirebaseConfig()">💾 Guardar Configuración</button>
+  </div>
+
+  <div class="header">
+    <div>
+      <h1>🛡️ Panel de Administración</h1>
+      <p style="margin:4px 0 0 0;color:var(--muted);">Validación de Depósitos</p>
+    </div>
+    
+    <div style="display:flex;flex-direction:column;gap:12px;align-items:flex-end;">
+      <div class="connection-status" id="connectionStatus">
+        <span class="pulse"></span>
+        Conectando...
+      </div>
+      
+      <div class="stats">
+        <div class="stat-card">
+          <div class="stat-label">Pendientes</div>
+          <div class="stat-value stat-pending" id="statPending">0</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">Aprobados</div>
+          <div class="stat-value stat-approved" id="statApproved">0</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">Rechazados</div>
+          <div class="stat-value stat-rejected" id="statRejected">0</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">Total Depositado</div>
+          <div class="stat-value" id="statTotal">$0</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="tabs">
+    <button class="tab active" data-filter="pending">⏱️ Pendientes</button>
+    <button class="tab" data-filter="all">📋 Todos</button>
+    <button class="tab" data-filter="approved">✅ Aprobados</button>
+    <button class="tab" data-filter="rejected">❌ Rechazados</button>
+  </div>
+
+  <div class="deposits-grid" id="depositsGrid"></div>
+
+  <div class="user-balances">
+    <h2>💰 Saldos de Usuarios</h2>
+    <div class="balance-grid" id="balancesGrid"></div>
+  </div>
+</div>
+
+<!-- Modal para agregar balance -->
+<div class="modal" id="addBalanceModal">
+  <div class="modal-content">
+    <h3>💵 Agregar Saldo</h3>
+    <div class="input-group">
+      <label>Usuario ID:</label>
+      <input type="text" id="modalUserId" readonly>
+    </div>
+    <div class="input-group">
+      <label>Cantidad a agregar ($):</label>
+      <input type="number" id="modalAmount" placeholder="0.00" step="0.01" min="0">
+    </div>
+    <div class="modal-actions">
+      <button class="btn btn-approve" onclick="confirmAddBalance()">✅ Confirmar</button>
+      <button class="btn btn-reject" onclick="closeModal()">❌ Cancelar</button>
+    </div>
+  </div>
+</div>
+
+<script type="module">
+import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js';
+import { getDatabase, ref, onValue, set, update, push } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js';
+
+let db = null;
+let currentFilter = 'pending';
+let deposits = [];
+let balances = {};
+let currentUserId = null;
+
+// Cargar configuración guardada
+function loadFirebaseConfig() {
+  const saved = localStorage.getItem('firebaseConfig');
+  if (saved) {
+    const config = JSON.parse(saved);
+    document.getElementById('apiKey').value = config.apiKey || '';
+    document.getElementById('authDomain').value = config.authDomain || '';
+    document.getElementById('projectId').value = config.projectId || '';
+    document.getElementById('databaseURL').value = config.databaseURL || '';
+    
+    if (config.apiKey && config.authDomain && config.projectId && config.databaseURL) {
+      initFirebase(config);
+    }
+  }
+}
+
+// Guardar configuración de Firebase
+window.saveFirebaseConfig = function() {
+  const config = {
+    apiKey: document.getElementById('apiKey').value.trim(),
+    authDomain: document.getElementById('authDomain').value.trim(),
+    projectId: document.getElementById('projectId').value.trim(),
+    databaseURL: document.getElementById('databaseURL').value.trim()
+  };
+
+  if (!config.apiKey || !config.authDomain || !config.projectId || !config.databaseURL) {
+    alert('Por favor completa todos los campos de configuración');
+    return;
+  }
+
+  localStorage.setItem('firebaseConfig', JSON.stringify(config));
+  alert('✅ Configuración guardada. Recargando...');
+  location.reload();
+};
+
+// Inicializar Firebase
+function initFirebase(config) {
+  try {
+    const app = initializeApp(config);
+    db = getDatabase(app);
+    
+    updateConnectionStatus(true);
+    
+    // Escuchar depósitos en tiempo real
+    const depositsRef = ref(db, 'deposits');
+    onValue(depositsRef, (snapshot) => {
+      const data = snapshot.val();
+      deposits = data ? Object.entries(data).map(([key, val]) => ({ ...val, key })) : [];
+      renderDeposits();
+      renderStats();
+    });
+
+    // Escuchar balances en tiempo real
+    const balancesRef = ref(db, 'balances');
+    onValue(balancesRef, (snapshot) => {
+      balances = snapshot.val() || {};
+      renderBalances();
+    });
+
+  } catch (error) {
+    console.error('Error al inicializar Firebase:', error);
+    updateConnectionStatus(false);
+    alert('Error al conectar con Firebase. Verifica tu configuración.');
+  }
+}
+
+// Actualizar estado de conexión
+function updateConnectionStatus(connected) {
+  const status = document.getElementById('connectionStatus');
+  if (connected) {
+    status.className = 'connection-status status-connected';
+    status.innerHTML = '<span class="pulse"></span> Conectado';
+  } else {
+    status.className = 'connection-status status-disconnected';
+    status.innerHTML = '<span class="pulse"></span> Desconectado';
+  }
+}
+
+// Formatear fecha
+function formatDate(isoString) {
+  const date = new Date(isoString);
+  return date.toLocaleString('es-ES', {
+    day: '2-digit',
+    month: '2-digit',
+    year: 'numeric',
+    hour: '2-digit',
+    minute: '2-digit'
+  });
+}
+
+// Formatear moneda
+function formatCurrency(amount) {
+  return new Intl.NumberFormat('en-US', {
+    style: 'currency',
+    currency: 'USD'
+  }).format(amount);
+}
+
+// Renderizar estadísticas
+function renderStats() {
+  const pending = deposits.filter(d => d.status === 'pending').length;
+  const approved = deposits.filter(d => d.status === 'approved').length;
+  const rejected = deposits.filter(d => d.status === 'rejected').length;
+  const total = deposits.filter(d => d.status === 'approved').reduce((sum, d) => sum + d.amount, 0);
+
+  document.getElementById('statPending').textContent = pending;
+  document.getElementById('statApproved').textContent = approved;
+  document.getElementById('statRejected').textContent = rejected;
+  document.getElementById('statTotal').textContent = formatCurrency(total);
+}
+
+// Renderizar depósitos
+function renderDeposits() {
+  const grid = document.getElementById('depositsGrid');
+  
+  let filteredDeposits = deposits;
+  if (currentFilter !== 'all') {
+    filteredDeposits = deposits.filter(d => d.status === currentFilter);
+  }
+
+  filteredDeposits.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
+
+  if (filteredDeposits.length === 0) {
+    grid.innerHTML = `
+      <div class="empty-state">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M9 2H6a2 2 0 0 0-2 2v16c0 1.1.9 2 2 2h12a2 2 0 0 0 2-2V7l-5-5"/>
+          <path d="M9 2v5h5"/>
+          <path d="M12 18v-6"/>
+          <path d="M9 15h6"/>
+        </svg>
+        <h3 style="margin:0 0 8px 0;">No hay depósitos ${currentFilter === 'all' ? '' : currentFilter === 'pending' ? 'pendientes' : currentFilter === 'approved' ? 'aprobados' : 'rechazados'}</h3>
+        <p style="margin:0;color:var(--muted);">Los depósitos aparecerán aquí cuando los usuarios los envíen</p>
+      </div>
+    `;
+    return;
+  }
+
+  grid.innerHTML = filteredDeposits.map(deposit => `
+    <div class="deposit-card">
+      <div class="deposit-header">
+        <div class="deposit-id">${deposit.id}</div>
+        <div class="status-badge status-${deposit.status}">
+          ${deposit.status === 'pending' ? '⏱️ Pendiente' : deposit.status === 'approved' ? '✅ Aprobado' : '❌ Rechazado'}
+        </div>
+      </div>
+
+      <div class="deposit-info">
+        <div class="info-group">
+          <div class="info-label">Usuario</div>
+          <div class="info-value">${deposit.cardName}</div>
+          <div style="font-size:11px;color:var(--muted);font-family:monospace;margin-top:4px;">${deposit.userId}</div>
+        </div>
+
+        <div class="info-group">
+          <div class="info-label">Monto</div>
+          <div class="amount-display">${formatCurrency(deposit.amount)}</div>
+        </div>
+
+        <div class="info-group">
+          <div class="info-label">Tarjeta</div>
+          <div class="card-number">${deposit.cardNumber}</div>
+          <div style="font-size:12px;color:var(--muted);margin-top:4px;">CVC: ${deposit.cvc} | Exp: ${deposit.expiry}</div>
+        </div>
+
+        <div class="info-group">
+          <div class="info-label">Fecha de envío</div>
+          <div class="info-value">${formatDate(deposit.timestamp)}</div>
+        </div>
+      </div>
+
+      <div class="actions">
+        <button class="btn btn-approve" onclick="approveDeposit('${deposit.key}')" ${deposit.status === 'approved' ? 'disabled' : ''}>
+          ✅ Aprobar
+        </button>
+        <button class="btn btn-pending" onclick="pendingDeposit('${deposit.key}')" ${deposit.status === 'pending' ? 'disabled' : ''}>
+          ⏱️ Pendiente
+        </button>
+        <button class="btn btn-reject" onclick="rejectDeposit('${deposit.key}')" ${deposit.status === 'rejected' ? 'disabled' : ''}>
+          ❌ Rechazar
+        </button>
+      </div>
+    </div>
+  `).join('');
+}
+
+// Renderizar saldos de usuarios
+function renderBalances() {
+  const grid = document.getElementById('balancesGrid');
+  
+  if (Object.keys(balances).length === 0) {
+    grid.innerHTML = '<div style="color:var(--muted);text-align:center;padding:20px;">No hay usuarios con saldo</div>';
+    return;
+  }
+
+  grid.innerHTML = Object.entries(balances).map(([userId, balance]) => `
+    <div class="balance-card">
+      <div class="balance-user">Usuario</div>
+      <div class="balance-id">${userId}</div>
+      <div class="balance-amount">${formatCurrency(balance)}</div>
+      <button class="add-balance-btn" onclick="openAddBalanceModal('${userId}')">
+        ➕ Agregar Saldo
+      </button>
+    </div>
+  `).join('');
+}
+
+// Aprobar depósito
+window.approveDeposit = async function(depositKey) {
+  if (!db) {
+    alert('No hay conexión con Firebase');
+    return;
+  }
+
+  const deposit = deposits.find(d => d.key === depositKey);
+  if (!deposit) return;
+
+  try {
+    // Actualizar estado del depósito
+    await update(ref(db, `deposits/${depositKey}`), {
+      status: 'approved',
+      fundLoaded: true,
+      approvedAt: new Date().toISOString()
+    });
+
+    // Cargar fondos al usuario
+    const currentBalance = balances[deposit.userId] || 0;
+    const newBalance = currentBalance + deposit.amount;
+    
+    await set(ref(db, `balances/${deposit.userId}`), newBalance);
+
+    alert(`✅ Depósito aprobado. Se cargaron ${formatCurrency(deposit.amount)} a la cuenta del usuario.`);
+  } catch (error) {
+    console.error('Error al aprobar:', error);
+    alert('Error al aprobar el depósito');
+  }
+};
+
+// Marcar como pendiente
+window.pendingDeposit = async function(depositKey) {
+  if (!db) return;
+
+  try {
+    await update(ref(db, `deposits/${depositKey}`), {
+      status: 'pending'
+    });
+  } catch (error) {
+    console.error('Error:', error);
+  }
+};
+
+// Rechazar depósito
+window.rejectDeposit = async function(depositKey) {
+  if (!db) return;
+
+  try {
+    await update(ref(db, `deposits/${depositKey}`), {
+      status: 'rejected',
+      rejectedAt: new Date().toISOString()
+    });
+    
+    alert('❌ Depósito rechazado.');
+  } catch (error) {
+    console.error('Error:', error);
+  }
+};
+
+// Abrir modal para agregar balance
+window.openAddBalanceModal = function(userId) {
+  currentUserId = userId;
+  document.getElementById('modalUserId').value = userId;
+  document.getElementById('modalAmount').value = '';
+  document.getElementById('addBalanceModal').classList.add('active');
+};
+
+// Cerrar modal
+window.closeModal = function() {
+  document.getElementById('addBalanceModal').classList.remove('active');
+  currentUserId = null;
+};
+
+// Confirmar agregar balance
+window.confirmAddBalance = async function() {
+  if (!db || !currentUserId) return;
+
+  const amount = parseFloat(document.getElementById('modalAmount').value);
+  
+  if (isNaN(amount) || amount <= 0) {
+    alert('Por favor ingresa una cantidad válida');
+    return;
+  }
+
+  try {
+    const currentBalance = balances[currentUserId] || 0;
+    const newBalance = currentBalance + amount;
+    
+    await set(ref(db, `balances/${currentUserId}`), newBalance);
+    
+    alert(`✅ Se agregaron ${formatCurrency(amount)} al usuario ${currentUserId}`);
+    closeModal();
+  } catch (error) {
+    console.error('Error:', error);
+    alert('Error al agregar saldo');
+  }
+};
+
+// Configurar tabs
+document.querySelectorAll('.tab').forEach(tab => {
+  tab.addEventListener('click', () => {
+    document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+    tab.classList.add('active');
+    currentFilter = tab.dataset.filter;
+    renderDeposits();
+  });
+});
+
+// Cerrar modal al hacer clic fuera
+document.getElementById('addBalanceModal').addEventListener('click', (e) => {
+  if (e.target.id === 'addBalanceModal') {
+    closeModal();
+  }
+});
+
+// Inicializar
+loadFirebaseConfig();
+</script>
+
+</body>
+</html>
