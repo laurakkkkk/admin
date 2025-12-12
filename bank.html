@@ -1,452 +1,77 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="es">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
 <title>Admin - Solicitudes Bank Transfer</title>
 <style>
-.back-button {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  padding: 10px 16px;
-  background: white;
-  border: 1px solid #e6eaeb;
-  border-radius: 8px;
-  color: #6b7280;
-  text-decoration: none;
-  font-weight: 500;
-  font-size: 14px;
-  margin-bottom: 16px;
-  transition: all 0.2s;
-}
-
-.back-button:hover {
-  background: #f9fafb;
-  border-color: #2f855a;
-  color: #2f855a;
-}
-
-.header-section {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 24px;
-  flex-wrap: wrap;
-  gap: 16px;
-}
-
-.header-section h1 {
-  margin: 0;
-}
-
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-}
-
-body {
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial;
-  background: #f5f7f8;
-  color: #1f2937;
-  padding: 20px;
-}
-
-.container {
-  max-width: 1400px;
-  margin: 0 auto;
-}
-
-h1 {
-  color: #1f2937;
-  margin-bottom: 24px;
-  font-size: 28px;
-  display: flex;
-  align-items: center;
-  gap: 12px;
-}
-
-.status-badge {
-  display: inline-block;
-  padding: 4px 12px;
-  border-radius: 12px;
-  font-size: 12px;
-  font-weight: 600;
-}
-
-.status-pending {
-  background: #fef3c7;
-  color: #92400e;
-}
-
-.status-sent {
-  background: #d1fae5;
-  color: #065f46;
-}
-
-.requests-grid {
-  display: grid;
-  gap: 16px;
-  grid-template-columns: repeat(auto-fill, minmax(400px, 1fr));
-}
-
-.request-card {
-  background: white;
-  border: 1px solid #e6eaeb;
-  border-radius: 12px;
-  padding: 20px;
-  box-shadow: 0 1px 3px rgba(0,0,0,0.05);
-  transition: all 0.2s;
-}
-
-.request-card:hover {
-  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-  transform: translateY(-2px);
-}
-
-.request-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
-  margin-bottom: 16px;
-  gap: 12px;
-}
-
-.request-country {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  font-size: 18px;
-  font-weight: 600;
-  color: #1f2937;
-}
-
-.country-flag {
-  width: 32px;
-  height: 24px;
-  object-fit: cover;
-  border-radius: 4px;
-  box-shadow: 0 1px 3px rgba(0,0,0,0.1);
-}
-
-.request-info {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-  margin-bottom: 16px;
-  padding: 12px;
-  background: #f9fafb;
-  border-radius: 8px;
-}
-
-.info-row {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  font-size: 14px;
-}
-
-.info-label {
-  color: #6b7280;
-  font-weight: 500;
-}
-
-.info-value {
-  color: #1f2937;
-  font-weight: 600;
-}
-
-.amount-display {
-  font-size: 24px;
-  color: #2f855a;
-  font-weight: 700;
-}
-
-.type-badge {
-  padding: 4px 10px;
-  border-radius: 6px;
-  font-size: 12px;
-  font-weight: 600;
-  text-transform: uppercase;
-}
-
-.type-cuenta {
-  background: #dbeafe;
-  color: #1e40af;
-}
-
-.type-qr {
-  background: #e0e7ff;
-  color: #4338ca;
-}
-
-.admin-form {
-  margin-top: 16px;
-  padding-top: 16px;
-  border-top: 2px solid #e6eaeb;
-}
-
-.form-group {
-  margin-bottom: 12px;
-}
-
-.form-label {
-  display: block;
-  font-size: 13px;
-  font-weight: 600;
-  color: #374151;
-  margin-bottom: 6px;
-}
-
-.form-input, .form-textarea {
-  width: 100%;
-  padding: 10px 12px;
-  border: 1px solid #d1d5db;
-  border-radius: 6px;
-  font-size: 14px;
-  font-family: inherit;
-  transition: border-color 0.2s;
-}
-
-.form-input:focus, .form-textarea:focus {
-  outline: none;
-  border-color: #2f855a;
-  box-shadow: 0 0 0 3px rgba(47, 133, 90, 0.1);
-}
-
-.form-textarea {
-  resize: vertical;
-  min-height: 80px;
-  font-family: 'Monaco', 'Courier New', monospace;
-  font-size: 13px;
-}
-
-.btn {
-  padding: 10px 20px;
-  border-radius: 8px;
-  border: none;
-  font-weight: 600;
-  font-size: 14px;
-  cursor: pointer;
-  transition: all 0.2s;
-  width: 100%;
-}
-
-.btn-primary {
-  background: #2f855a;
-  color: white;
-}
-
-.btn-primary:hover {
-  background: #276749;
-  transform: translateY(-1px);
-  box-shadow: 0 4px 8px rgba(47, 133, 90, 0.3);
-}
-
-.btn-primary:disabled {
-  background: #9ca3af;
-  cursor: not-allowed;
-  transform: none;
-}
-
-.success-msg {
-  margin-top: 12px;
-  padding: 10px;
-  background: #d1fae5;
-  color: #065f46;
-  border-radius: 6px;
-  font-size: 13px;
-  font-weight: 500;
-  display: none;
-}
-
-.success-msg.show {
-  display: block;
-}
-
-.timestamp {
-  font-size: 12px;
-  color: #9ca3af;
-  margin-top: 4px;
-}
-
-.empty-state {
-  text-align: center;
-  padding: 60px 20px;
-  background: white;
-  border-radius: 12px;
-  border: 2px dashed #e6eaeb;
-}
-
-.empty-state svg {
-  margin-bottom: 16px;
-  opacity: 0.3;
-}
-
-.empty-state h3 {
-  color: #6b7280;
-  margin-bottom: 8px;
-}
-
-.empty-state p {
-  color: #9ca3af;
-  font-size: 14px;
-}
-
-.sent-response {
-  margin-top: 12px;
-  padding: 12px;
-  background: #f0f9ff;
-  border: 1px solid #bae6fd;
-  border-radius: 8px;
-}
-
-.sent-response-label {
-  font-size: 12px;
-  font-weight: 600;
-  color: #0369a1;
-  margin-bottom: 8px;
-  display: block;
-}
-
-.sent-response-content {
-  font-size: 13px;
-  color: #1e40af;
-  background: white;
-  padding: 8px;
-  border-radius: 4px;
-  word-break: break-word;
-}
-
-.filter-tabs {
-  display: flex;
-  gap: 8px;
-  margin-bottom: 24px;
-  flex-wrap: wrap;
-}
-
-.filter-tab {
-  padding: 8px 16px;
-  border-radius: 8px;
-  background: white;
-  border: 1px solid #e6eaeb;
-  color: #6b7280;
-  cursor: pointer;
-  font-size: 14px;
-  font-weight: 500;
-  transition: all 0.2s;
-}
-
-.filter-tab:hover {
-  border-color: #2f855a;
-}
-
-.filter-tab.active {
-  background: #2f855a;
-  color: white;
-  border-color: #2f855a;
-}
-
-.stats-bar {
-  display: flex;
-  gap: 16px;
-  margin-bottom: 24px;
-  flex-wrap: wrap;
-}
-
-.stat-card {
-  flex: 1;
-  min-width: 200px;
-  background: white;
-  padding: 16px;
-  border-radius: 10px;
-  border: 1px solid #e6eaeb;
-}
-
-.stat-label {
-  font-size: 13px;
-  color: #6b7280;
-  margin-bottom: 4px;
-}
-
-.stat-value {
-  font-size: 28px;
-  font-weight: 700;
-  color: #1f2937;
-}
-
-@media (max-width: 768px) {
-  .requests-grid {
-    grid-template-columns: 1fr;
+  :root{
+    --bg:#f5f7f8; --card:#fff; --border:#e6eaeb; --accent:#2f855a; --muted:#6b7280; --text:#1f2937;
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial;
   }
-  
-  .stats-bar {
-    flex-direction: column;
-  }
-  
-  body {
-    padding: 12px;
-  }
-  
-  h1 {
-    font-size: 22px;
-  }
-}
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--text);padding:20px}
+  .container{max-width:1200px;margin:0 auto}
+  .back-button{display:inline-flex;align-items:center;gap:8px;padding:10px 16px;background:var(--card);border:1px solid var(--border);border-radius:8px;text-decoration:none;color:var(--muted);margin-bottom:16px}
+  h1{display:flex;align-items:center;gap:12px}
+  .stats{display:flex;gap:12px;margin:16px 0;flex-wrap:wrap}
+  .stat{background:var(--card);padding:12px;border-radius:8px;border:1px solid var(--border);min-width:140px}
+  .filters{display:flex;gap:8px;margin-bottom:16px;flex-wrap:wrap}
+  .filter{padding:8px 12px;border-radius:8px;background:var(--card);border:1px solid var(--border);cursor:pointer}
+  .filter.active{background:var(--accent);color:#fff;border-color:var(--accent)}
+  .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:16px}
+  .card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:16px;box-shadow:0 1px 4px rgba(0,0,0,0.04)}
+  .row{display:flex;justify-content:space-between;align-items:center}
+  .country{display:flex;align-items:center;gap:10px;font-weight:600}
+  .flag{width:36px;height:24px;object-fit:cover;border-radius:4px}
+  .info{margin-top:12px;background:#f9fafb;padding:12px;border-radius:8px}
+  .info .line{display:flex;justify-content:space-between;margin-bottom:8px;font-size:14px}
+  .amount{font-size:20px;color:var(--accent);font-weight:700}
+  .currency-badge{font-size:13px;color:var(--muted);font-weight:800;margin-left:8px}
+  .type{display:inline-block;padding:4px 8px;border-radius:8px;font-weight:700;font-size:12px}
+  .type.cuenta{background:#dbeafe;color:#1e40af}
+  .type.qr{background:#e0e7ff;color:#4338ca}
+  .timestamp{font-size:12px;color:var(--muted);margin-top:8px}
+  .admin-form{margin-top:12px;border-top:2px solid var(--border);padding-top:12px}
+  .form-row{margin-bottom:10px}
+  label{display:block;font-size:13px;color:var(--muted);margin-bottom:6px;font-weight:600}
+  input[type="text"], textarea{width:100%;padding:10px;border-radius:8px;border:1px solid #d1d5db;font-size:14px}
+  textarea{min-height:80px;resize:vertical;font-family:inherit}
+  input[type="file"]{padding:6px}
+  .btn{display:inline-block;padding:10px 14px;border-radius:8px;border:none;background:var(--accent);color:#fff;font-weight:700;cursor:pointer}
+  .btn.secondary{background:#0ea5a3}
+  .success{padding:8px;background:#d1fae5;color:#065f46;border-radius:8px;margin-top:8px;display:none}
+  .success.show{display:block}
+  .badge.pending{background:#fef3c7;color:#92400e;padding:4px 10px;border-radius:999px;font-weight:700}
+  .badge.sent{background:#d1fae5;color:#065f46;padding:4px 10px;border-radius:999px;font-weight:700}
+  .small{font-size:13px;color:var(--muted)}
+  img.qr{max-width:180px;width:100%;height:auto;border-radius:8px;border:2px solid #e0f2fe;margin-top:8px}
+  .user-proof{max-width:160px;border-radius:8px;border:1px solid var(--border);display:block;margin-top:8px}
+  .link{color:#2563eb;text-decoration:underline;cursor:pointer}
+  @media (max-width:640px){ .grid{grid-template-columns:1fr} }
 </style>
 </head>
 <body>
-
 <div class="container">
-  <a href="index.html" class="back-button">
-    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-      <line x1="19" y1="12" x2="5" y2="12"></line>
-      <polyline points="12 19 5 12 12 5"></polyline>
-    </svg>
-    Volver al Panel Admin
-  </a>
-
-  <div class="header-section">
-    <h1>
-      <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-        <rect x="2" y="5" width="20" height="14" rx="2"/>
-        <line x1="2" y1="10" x2="22" y2="10"/>
-      </svg>
-      Solicitudes Bank Transfer
-    </h1>
+  <a class="back-button" href="index.html">← Volver al Panel</a>
+  <div class="header">
+    <h1>Solicitudes Bank Transfer — Admin</h1>
   </div>
 
-  <div class="stats-bar">
-    <div class="stat-card">
-      <div class="stat-label">Total Solicitudes</div>
-      <div class="stat-value" id="totalRequests">0</div>
-    </div>
-    <div class="stat-card">
-      <div class="stat-label">Pendientes</div>
-      <div class="stat-value" id="pendingRequests">0</div>
-    </div>
-    <div class="stat-card">
-      <div class="stat-label">Enviadas</div>
-      <div class="stat-value" id="sentRequests">0</div>
-    </div>
+  <div class="stats" id="statsBar">
+    <div class="stat"><div class="small">Total Solicitudes</div><div id="total" style="font-weight:800;font-size:20px">0</div></div>
+    <div class="stat"><div class="small">Pendientes</div><div id="pend" style="font-weight:800;font-size:20px">0</div></div>
+    <div class="stat"><div class="small">Enviadas</div><div id="sent" style="font-weight:800;font-size:20px">0</div></div>
   </div>
 
-  <div class="filter-tabs">
-    <button class="filter-tab active" data-filter="all">Todas</button>
-    <button class="filter-tab" data-filter="pending">Pendientes</button>
-    <button class="filter-tab" data-filter="sent">Enviadas</button>
+  <div class="filters">
+    <button class="filter active" data-filter="all">Todas</button>
+    <button class="filter" data-filter="pending">Pendientes</button>
+    <button class="filter" data-filter="sent">Enviadas</button>
   </div>
 
-  <div class="requests-grid" id="requestsContainer">
-    <div class="empty-state">
-      <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-        <circle cx="12" cy="12" r="10"></circle>
-        <line x1="12" y1="8" x2="12" y2="12"></line>
-        <line x1="12" y1="16" x2="12.01" y2="16"></line>
-      </svg>
-      <h3>No hay solicitudes</h3>
-      <p>Las solicitudes de Bank Transfer aparecerán aquí</p>
-    </div>
+  <div class="grid" id="requestsGrid">
+    <!-- cards injected aquí -->
   </div>
 </div>
 
@@ -461,213 +86,242 @@ const REQUESTS_FIREBASE_CONFIG = {
   projectId: "solicitudes-8c08c"
 };
 
-let requestsDb = null;
+let app, db;
+try {
+  app = initializeApp(REQUESTS_FIREBASE_CONFIG);
+  db = getDatabase(app);
+  console.log('Firebase requests init');
+} catch(e){
+  console.error('Firebase init error', e);
+  alert('Error al inicializar Firebase en admin.');
+}
+
 let allRequests = {};
 let currentFilter = 'all';
 
-try {
-  const requestsApp = initializeApp(REQUESTS_FIREBASE_CONFIG);
-  requestsDb = getDatabase(requestsApp);
-  console.log('✅ Firebase inicializado correctamente');
-  loadRequests();
-} catch (error) {
-  console.error('❌ Error al inicializar Firebase:', error);
-}
-
-function loadRequests() {
-  const requestsRef = ref(requestsDb, 'bank_requests');
-  onValue(requestsRef, (snapshot) => {
-    const data = snapshot.val();
-    allRequests = data || {};
-    updateStats();
-    renderRequests();
-  });
-}
+const requestsGrid = document.getElementById('requestsGrid');
+const totalEl = document.getElementById('total');
+const pendEl = document.getElementById('pend');
+const sentEl = document.getElementById('sent');
 
 function updateStats() {
-  const requests = Object.values(allRequests);
-  const total = requests.length;
-  const pending = requests.filter(r => r.status === 'pending').length;
-  const sent = requests.filter(r => r.status === 'sent').length;
-
-  document.getElementById('totalRequests').textContent = total;
-  document.getElementById('pendingRequests').textContent = pending;
-  document.getElementById('sentRequests').textContent = sent;
+  const vals = Object.values(allRequests);
+  totalEl.textContent = vals.length;
+  pendEl.textContent = vals.filter(x=>x.status==='pending').length;
+  sentEl.textContent = vals.filter(x=>x.status==='sent').length;
 }
 
-function renderRequests() {
-  const container = document.getElementById('requestsContainer');
-  const requests = Object.entries(allRequests)
-    .map(([key, data]) => ({ key, ...data }))
-    .sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
+function sanitize(s){
+  if(!s && s!==0) return '';
+  return String(s).replace(/</g,'&lt;').replace(/>/g,'&gt;');
+}
 
-  const filtered = requests.filter(r => {
-    if (currentFilter === 'all') return true;
-    return r.status === currentFilter;
-  });
+function createCard(key, data){
+  const date = new Date(data.timestamp || Date.now());
+  const formatted = date.toLocaleString('es-ES', { day:'2-digit',month:'short',year:'numeric',hour:'2-digit',minute:'2-digit' });
 
-  if (filtered.length === 0) {
-    container.innerHTML = `
-      <div class="empty-state">
-        <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-          <circle cx="12" cy="12" r="10"></circle>
-          <line x1="12" y1="8" x2="12" y2="12"></line>
-          <line x1="12" y1="16" x2="12.01" y2="16"></line>
-        </svg>
-        <h3>No hay solicitudes</h3>
-        <p>${currentFilter === 'pending' ? 'No hay solicitudes pendientes' : currentFilter === 'sent' ? 'No hay solicitudes enviadas' : 'Las solicitudes aparecerán aquí'}</p>
-      </div>
-    `;
-    return;
+  const statusBadge = data.status==='pending' ? '<span class="badge pending">Pendiente</span>' : '<span class="badge sent">Enviada</span>';
+  const typeBadge = data.type==='cuenta' ? '<span class="type cuenta">Cuenta</span>' : '<span class="type qr">QR</span>';
+
+  // user proof (if any)
+  let userProofHtml = '';
+  if(data.userProofImageBase64){
+    // mostrar imagen (o pdf) - si es data URL de imagen, la mostramos; si es PDF, dejamos link de descarga
+    if(/^data:(image\/(png|jpg|jpeg|gif|webp|svg\+xml));base64,/i.test(data.userProofImageBase64) || data.userProofName?.match(/\.(jpg|jpeg|png|gif|webp|svg)$/i)){
+      userProofHtml = `<a href="${data.userProofImageBase64}" target="_blank"><img class="user-proof" src="${data.userProofImageBase64}" alt="Comprobante ${sanitize(data.userProofName||'')}" /></a>
+      <div class="small">Nombre: ${sanitize(data.userProofName||'—')}</div>`;
+    } else {
+      // probablemente PDF dataURL
+      userProofHtml = `<div class="small">Comprobante: <a class="link" href="${data.userProofImageBase64}" target="_blank">Ver / Descargar</a></div>`;
+    }
   }
 
-  container.innerHTML = filtered.map(request => createRequestCard(request)).join('');
-  
-  filtered.forEach(request => {
-    if (request.status === 'pending') {
-      attachFormListeners(request.key);
+  // admin response area (for sent requests)
+  let sentHtml = '';
+  if(data.status === 'sent'){
+    let adminMsg = data.adminMessage ? `<div class="small" style="font-weight:700;color:#0369a1;margin-bottom:8px">Mensaje admin:</div><div class="small" style="background:#fff;padding:8px;border-radius:6px;border:1px solid #e6f2ff;margin-bottom:8px">${sanitize(data.adminMessage)}</div>` : '';
+    let adminData = '';
+    if(data.adminImageBase64){
+      adminData = `<img class="qr" src="${data.adminImageBase64}" alt="QR enviado" />`;
+    } else if(data.adminData && /^https?:\/\/.+\.(jpg|jpeg|png|gif|webp|svg)$/i.test(data.adminData)){
+      adminData = `<img class="qr" src="${data.adminData}" alt="QR enviado" />`;
+    } else if(data.adminData){
+      adminData = `<div class="small" style="background:#fff;padding:8px;border-radius:6px;border:1px solid #e6f2fe">${sanitize(data.adminData)}</div>`;
     }
-  });
-}
+    sentHtml = `<div style="margin-top:12px">${adminMsg}${adminData}</div>`;
+  }
 
-function createRequestCard(request) {
-  const date = new Date(request.timestamp);
-  const formattedDate = date.toLocaleDateString('es-ES', { 
-    day: '2-digit', 
-    month: 'short', 
-    year: 'numeric',
-    hour: '2-digit',
-    minute: '2-digit'
-  });
-
-  const statusBadge = request.status === 'pending' 
-    ? '<span class="status-badge status-pending">Pendiente</span>'
-    : '<span class="status-badge status-sent">Enviada</span>';
-
-  const typeBadge = request.type === 'cuenta'
-    ? '<span class="type-badge type-cuenta">Cuenta</span>'
-    : '<span class="type-badge type-qr">QR</span>';
-
-  const adminForm = request.status === 'pending' ? `
-    <div class="admin-form">
-      <div class="form-group">
-        <label class="form-label">Mensaje al usuario (opcional)</label>
-        <input type="text" class="form-input" id="message-${request.key}" placeholder="Ej: Realiza la transferencia a esta cuenta">
+  // only show upload form when pending
+  const adminFormHtml = data.status === 'pending' ? `
+    <div class="admin-form" data-key="${key}">
+      <div class="form-row">
+        <label>Mensaje al usuario (opcional)</label>
+        <input type="text" id="msg-${key}" placeholder="Ej: Realiza la transferencia a esta cuenta">
       </div>
-      <div class="form-group">
-        <label class="form-label">Datos Bancarios o URL de Imagen QR</label>
-        <textarea class="form-textarea" id="data-${request.key}" placeholder="Cuenta bancaria:\nBANCO: Banco Ejemplo\nTitular: Juan Pérez\nCuenta: 1234567890\n\nO URL de imagen:\nhttps://ejemplo.com/qr.png"></textarea>
+      <div class="form-row">
+        <label>Datos bancarios (texto opcional)</label>
+        <textarea id="data-${key}" placeholder="Banco: ...\nTitular: ..."></textarea>
       </div>
-      <button class="btn btn-primary" id="send-${request.key}">
-        Enviar al Usuario
-      </button>
-      <div class="success-msg" id="success-${request.key}">
-        ✅ Respuesta enviada al usuario correctamente
+      <div class="form-row">
+        <label>Subir imagen QR a enviar (archivo)</label>
+        <input type="file" id="file-${key}" accept="image/*" />
+        <div class="small" style="margin-top:6px">Puedes subir JPG/PNG/WebP. La imagen se enviará al usuario (no es necesario subir link).</div>
       </div>
+      <div style="display:flex;gap:8px;margin-top:8px">
+        <button class="btn" id="send-${key}">Enviar al Usuario</button>
+        <button class="btn secondary" id="preview-${key}">Vista previa</button>
+      </div>
+      <div class="success" id="ok-${key}">✅ Respuesta enviada al usuario correctamente</div>
     </div>
-  ` : `
-    <div class="sent-response">
-      ${request.adminMessage ? `
-        <span class="sent-response-label">Mensaje enviado:</span>
-        <div class="sent-response-content">${request.adminMessage}</div>
-      ` : ''}
-      ${request.adminData ? `
-        <span class="sent-response-label">${request.adminData.startsWith('http') ? 'Imagen QR enviada:' : 'Datos enviados:'}</span>
-        <div class="sent-response-content">${request.adminData.startsWith('http') ? `<a href="${request.adminData}" target="_blank">${request.adminData}</a>` : request.adminData}</div>
-      ` : ''}
-    </div>
-  `;
+  ` : '';
 
-  return `
-    <div class="request-card">
-      <div class="request-header">
-        <div class="request-country">
-          <img src="${request.countryFlagUrl}" alt="${request.countryName}" class="country-flag">
-          <span>${request.countryName}</span>
+  // currency display (show currency code next to amount)
+  const currencyToShow = sanitize(data.currency || 'USD');
+
+  // build card html
+  const html = `
+    <div class="card" id="card-${key}">
+      <div class="row">
+        <div class="country">
+          <img class="flag" src="${sanitize(data.countryFlagUrl||'https://flagcdn.com/w40/es.png')}" alt="${sanitize(data.countryName||'')}" />
+          <div>${sanitize(data.countryName||'—')}</div>
         </div>
         ${statusBadge}
       </div>
 
-      <div class="request-info">
-        <div class="info-row">
-          <span class="info-label">Monto:</span>
-          <span class="amount-display">$${request.amount}</span>
-        </div>
-        <div class="info-row">
-          <span class="info-label">Tipo:</span>
-          ${typeBadge}
-        </div>
-        <div class="info-row">
-          <span class="info-label">Usuario:</span>
-          <span class="info-value">${request.userId}</span>
-        </div>
-        <div class="info-row">
-          <span class="info-label">ID Solicitud:</span>
-          <span class="info-value" style="font-size:11px;font-family:monospace;">${request.id}</span>
-        </div>
+      <div class="info">
+        <div class="line"><div class="small">Monto</div><div class="amount">${sanitize(String(data.amount||'0'))}<span class="currency-badge">${currencyToShow}</span></div></div>
+        <div class="line"><div class="small">Tipo</div><div>${typeBadge}</div></div>
+        <div class="line"><div class="small">Usuario</div><div style="font-weight:700">${sanitize(data.userId||'—')}</div></div>
+        <div class="line"><div class="small">ID Solicitud</div><div style="font-family:monospace;font-size:12px">${sanitize(data.id||key)}</div></div>
+        ${userProofHtml}
       </div>
 
-      <div class="timestamp">📅 ${formattedDate}</div>
+      <div class="timestamp">📅 ${formatted}</div>
 
-      ${adminForm}
+      ${data.status === 'sent' ? sentHtml : adminFormHtml}
     </div>
   `;
+  return html;
 }
 
-function attachFormListeners(requestKey) {
-  const sendBtn = document.getElementById(`send-${requestKey}`);
-  if (!sendBtn) return;
-
-  sendBtn.addEventListener('click', async () => {
-    const messageInput = document.getElementById(`message-${requestKey}`);
-    const dataInput = document.getElementById(`data-${requestKey}`);
-    const successMsg = document.getElementById(`success-${requestKey}`);
-
-    const message = messageInput.value.trim();
-    const data = dataInput.value.trim();
-
-    if (!data) {
-      alert('⚠️ Debes ingresar los datos bancarios o la URL de la imagen QR');
-      return;
-    }
-
-    try {
-      sendBtn.disabled = true;
-      sendBtn.textContent = 'Enviando...';
-
-      const requestRef = ref(requestsDb, `bank_requests/${requestKey}`);
-      await update(requestRef, {
-        status: 'sent',
-        adminMessage: message || null,
-        adminData: data,
-        sentAt: new Date().toISOString()
-      });
-
-      successMsg.classList.add('show');
-      setTimeout(() => {
-        successMsg.classList.remove('show');
-      }, 3000);
-
-      console.log('✅ Respuesta enviada al usuario');
-
-    } catch (error) {
-      console.error('❌ Error al enviar respuesta:', error);
-      alert('Error al enviar la respuesta: ' + error.message);
-      sendBtn.disabled = false;
-      sendBtn.textContent = 'Enviar al Usuario';
-    }
+// read file -> dataURL helper (promisified)
+function fileToDataURL(file){
+  return new Promise((resolve,reject)=>{
+    const r = new FileReader();
+    r.onload = ()=> resolve(r.result);
+    r.onerror = err => reject(err);
+    r.readAsDataURL(file);
   });
 }
 
-document.querySelectorAll('.filter-tab').forEach(tab => {
-  tab.addEventListener('click', () => {
-    document.querySelectorAll('.filter-tab').forEach(t => t.classList.remove('active'));
-    tab.classList.add('active');
-    currentFilter = tab.dataset.filter;
-    renderRequests();
+// render all requests
+function renderAll() {
+  const entries = Object.entries(allRequests)
+    .map(([k,v]) => ({ key:k, ...v }))
+    .sort((a,b)=> new Date(b.timestamp || 0) - new Date(a.timestamp || 0));
+
+  const filtered = entries.filter(r => {
+    if(currentFilter==='all') return true;
+    return r.status === currentFilter;
+  });
+
+  if(filtered.length === 0){
+    requestsGrid.innerHTML = `<div style="grid-column:1/-1;background:var(--card);border:1px dashed var(--border);padding:40px;border-radius:12px;text-align:center;color:var(--muted)">No hay solicitudes</div>`;
+    return;
+  }
+
+  requestsGrid.innerHTML = filtered.map(r => createCard(r.key, r)).join('');
+
+  // attach listeners for pending send buttons
+  filtered.forEach(r => {
+    if(r.status === 'pending'){
+      const sendBtn = document.getElementById(`send-${r.key}`);
+      const previewBtn = document.getElementById(`preview-${r.key}`);
+      if(sendBtn){
+        sendBtn.addEventListener('click', async () => {
+          sendBtn.disabled = true;
+          sendBtn.textContent = 'Enviando...';
+          try {
+            const msg = document.getElementById(`msg-${r.key}`).value.trim();
+            const dataText = document.getElementById(`data-${r.key}`).value.trim();
+            const fileInput = document.getElementById(`file-${r.key}`);
+            let adminImageBase64 = null;
+            if(fileInput && fileInput.files && fileInput.files[0]){
+              try {
+                adminImageBase64 = await fileToDataURL(fileInput.files[0]);
+              } catch(e){
+                console.warn('Error leyendo archivo admin', e);
+              }
+            }
+
+            const reqRef = ref(db, `bank_requests/${r.key}`);
+            const updatePayload = {
+              status: 'sent',
+              adminMessage: msg || null,
+              adminData: dataText || null,
+              adminImageBase64: adminImageBase64 || null,
+              sentAt: new Date().toISOString()
+            };
+
+            await update(reqRef, updatePayload);
+            document.getElementById(`ok-${r.key}`).classList.add('show');
+            setTimeout(()=> document.getElementById(`ok-${r.key}`).classList.remove('show'), 3000);
+            console.log('Respuesta enviada para', r.key);
+          } catch(err){
+            console.error('Error enviando respuesta', err);
+            alert('Error al enviar respuesta: ' + (err.message||String(err)));
+          } finally {
+            sendBtn.disabled = false;
+            sendBtn.textContent = 'Enviar al Usuario';
+          }
+        });
+      }
+
+      if(previewBtn){
+        previewBtn.addEventListener('click', async () => {
+          const fileInput = document.getElementById(`file-${r.key}`);
+          const dataText = document.getElementById(`data-${r.key}`).value.trim();
+          if(fileInput && fileInput.files && fileInput.files[0]){
+            try {
+              const dataUrl = await fileToDataURL(fileInput.files[0]);
+              // abrir en nueva pestaña para preview
+              const w = window.open('');
+              w.document.write(`<img src="${dataUrl}" style="max-width:100%;height:auto" />`);
+            } catch(e){
+              alert('No se pudo obtener vista previa: ' + e.message);
+            }
+          } else if(dataText){
+            alert('Datos a enviar:\n\n' + dataText);
+          } else {
+            alert('No hay archivo ni datos para previsualizar');
+          }
+        });
+      }
+    }
+  });
+
+}
+
+// listen to DB
+const requestsRef = ref(db, 'bank_requests');
+onValue(requestsRef, (snap) => {
+  const data = snap.val() || {};
+  allRequests = data;
+  updateStats();
+  renderAll();
+});
+
+// filters
+document.querySelectorAll('.filter').forEach(btn=>{
+  btn.addEventListener('click', ()=> {
+    document.querySelectorAll('.filter').forEach(b=>b.classList.remove('active'));
+    btn.classList.add('active');
+    currentFilter = btn.dataset.filter;
+    renderAll();
   });
 });
-</script>
 
+</script>
 </body>
 </html>
