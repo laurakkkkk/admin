@@ -932,6 +932,39 @@ if (requestsDb) {
   });
 }
 </script>
+<!-- ==========================
+     BOTÓN PARA IR A bank.html
+     ========================== -->
+<script>
+(function(){
+    const goBtnId = "goToBankHtmlBtn";
+    if (!document.getElementById(goBtnId)) {
+        const btn = document.createElement("button");
+        btn.id = goBtnId;
+        btn.textContent = "📄 Solicitudes";
+        Object.assign(btn.style, {
+            position: "fixed",
+            left: "18px",
+            top: "18px",
+            zIndex: 9999,
+            padding: "10px 14px",
+            borderRadius: "10px",
+            background: "#10b981",
+            color: "#fff",
+            fontWeight: "bold",
+            border: "none",
+            cursor: "pointer",
+            boxShadow: "0 4px 14px rgba(0,0,0,0.3)"
+        });
+
+        btn.onclick = () => {
+            window.location.href = "bank.html";
+        };
+
+        document.body.appendChild(btn);
+    }
+})();
+</script>
 
 </body>
 </html>
