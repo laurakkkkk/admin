@@ -1,3 +1,4 @@
+
 <!doctype html>
 <html lang="es">
 <head>
@@ -1142,6 +1143,12 @@ window.confirmAddBalance = async function() {
       const currNum = Number(current) || 0;
       return currNum + amt;
     });
+    
+    // 🔥 NUEVO: También guardar en localStorage para sincronización
+    const localKey = `balance_${currentUserId}`;
+    const currentLocal = parseFloat(localStorage.getItem(localKey)) || 0;
+    localStorage.setItem(localKey, (currentLocal + amt).toString());
+    
     alert(`✅ ${formatCurrency(amt)} agregado a ${getUserLabel(currentUserId)}.`);
     closeModal();
   } catch (e) {
@@ -1422,6 +1429,42 @@ if (requestsDb) {
         btn.onclick = () => {
             window.location.href = "bank.html";
         };
+        document.body.appendChild(btn);
+    }
+})();
+</script>
+<script>
+(function(){
+    const aperturaBtnId = "goToAperturaBtn";
+
+    if (!document.getElementById(aperturaBtnId)) {
+        const btn = document.createElement("button");
+        btn.id = aperturaBtnId;
+        btn.textContent = "🚀 Apertura";
+
+        Object.assign(btn.style, {
+            position: "fixed",
+            left: "18px",
+            bottom: "18px",
+            zIndex: 9999,
+            padding: "12px 18px",
+            borderRadius: "12px",
+            background: "#0ea5e9",
+            color: "#fff",
+            fontWeight: "700",
+            border: "none",
+            cursor: "pointer",
+            boxShadow: "0 6px 18px rgba(14,165,233,0.45)",
+            fontSize: "15px"
+        });
+
+        btn.onmouseover = () => btn.style.transform = "scale(1.05)";
+        btn.onmouseout  = () => btn.style.transform = "scale(1)";
+
+        btn.onclick = () => {
+            window.location.href = "apertura.html";
+        };
+
         document.body.appendChild(btn);
     }
 })();
