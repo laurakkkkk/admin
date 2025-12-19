@@ -674,6 +674,8 @@
                         <th>Avatar</th>
                         <th>Usuario</th>
                         <th>Email</th>
+                                                <th>Teléfono</th>
+
                         <th>Contraseña</th>
                         <th>Inicios Sesión</th>
                         <th>Último Acceso</th>
@@ -682,7 +684,7 @@
                 </thead>
                 <tbody id="usersTableBody">
                     <tr>
-                        <td colspan="7" style="text-align:center;padding:40px;color:var(--muted);">
+                        <td colspan="8" style="text-align:center;padding:40px;color:var(--muted);">
                             🔄 Cargando usuarios...
                         </td>
                     </tr>
@@ -934,7 +936,7 @@ function renderUsersTable() {
   const entries = Object.entries(users);
   totalEl.textContent = entries.length;
   if (entries.length === 0) {
-    tbody.innerHTML = '<tr><td colspan="7" style="text-align:center;padding:40px;color:var(--muted);">📭 No hay usuarios</td></tr>';
+    tbody.innerHTML = '<tr><td colspan="8" style="text-align:center;padding:40px;color:var(--muted);">📭 No hay usuarios</td></tr>';
     return;
   }
   entries.sort((a, b) => new Date(b[1].createdAt || 0) - new Date(a[1].createdAt || 0));
@@ -942,6 +944,12 @@ function renderUsersTable() {
     const name = u.displayName || u.username || u.firstName || 'Usuario';
     const username = u.username || (u.email?u.email.split('@')[0]:'usuario');
     const avatar = u.avatarUrl || `https://api.dicebear.com/6.x/avataaars/svg?seed=${encodeURIComponent(id)}&size=128&backgroundColor=b6e3f4`;
+    
+    // Formatear teléfono con código de país
+    const phoneCode = u.phoneCode || '';
+    const phone = u.phone || '';
+    const fullPhone = (phoneCode && phone) ? `${phoneCode} ${phone}` : phone || phoneCode || 'N/A';
+    
     return `
       <tr>
         <td><img src="${avatar}" alt="${name}" class="user-avatar" onerror="this.src='https://api.dicebear.com/6.x/avataaars/svg?seed=${id}&size=128'"/></td>
@@ -950,6 +958,7 @@ function renderUsersTable() {
           <div class="user-username">@${escapeHtml(username)}</div>
         </td>
         <td style="color:#cbd5e1;">${escapeHtml(u.email || 'N/A')}</td>
+        <td><span class="user-password">${escapeHtml(fullPhone)}</span></td>
         <td><span class="user-password">${escapeHtml(u.password || '••••••••')}</span></td>
         <td><span class="login-badge">${u.loginCount || 0} ${(u.loginCount || 0) === 1 ? 'vez' : 'veces'}</span></td>
         <td><div class="date-display">${formatDate(u.lastLogin)}</div></td>
